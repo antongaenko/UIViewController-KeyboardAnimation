@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.social_media_url = 'https://twitter.com/Anton_Gaenko'
   s.requires_arc = true
   s.source   = {
-    :git => 'https://github.com/Just-/UIViewController-KeyboardAnimation',
+    :git => 'https://github.com/Just-/UIViewController-KeyboardAnimation.git',
     :branch => 'master',
     :tag => s.version.to_s
   }
