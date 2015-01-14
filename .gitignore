@@ -1,0 +1,6 @@
+# Exclude OS X folder attributes
+.DS_Store
+ 
+# Exclude user-specific XCode files
+*.xcworkspace
+xcuserdata
