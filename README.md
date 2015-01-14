@@ -82,7 +82,7 @@ This category registers/unregisters your view controller to **UIKeyboardWillShow
 
 Add the following to your [CocoaPods](http://cocoapods.org/) Podfile
 
-    pod 'UIViewController+KeyboardAnimation', '~> 1.0'
+    pod 'UIViewController+KeyboardAnimation', '~> 1.1'
 
 or clone as a git submodule,
 
