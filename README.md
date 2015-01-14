@@ -10,6 +10,10 @@ Working with iOS keyboard demands a lot of duplicated code. This category allows
 ## Demo
 ![KeyboardAnimationDemo](https://raw.githubusercontent.com/Just-/demo/master/kb_anim_demo.gif)
 
+Another demo 
+
+`pod try UIViewController+KeyboardAnimation`
+
 ## Example
 Imagine that you need to implement chat-like input over keyboard. OK, import this category.
 
@@ -91,3 +95,7 @@ All this code is available under the MIT license.
 ## Contact
 
 Follow me on [Twitter](https://twitter.com/Anton_Gaenko) or [Github](https://github.com/Just-)
+
+## More sources 
+
+Simple category to show loading status in a navigation bar (left/right items or title) [UINavigationItem-Loading](https://github.com/Just-/UINavigationItem-Loading)
