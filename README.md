@@ -8,9 +8,10 @@ Easy way to handle iOS keyboard showing/dismissing.
 Working with iOS keyboard demands a lot of duplicated code. This category allows you to declare your animations with smooth keyboard animation timing and write very little code.
 
 ## Demo
-![KeyboardAnimationDemo](https://raw.githubusercontent.com/Just-/demo/master/kb_anim_demo.gif)
+![KeyboardAnimationDemo1](https://raw.githubusercontent.com/Just-/demo/master/an_kb_animation_demo.gif)
+![KeyboardAnimationDemo2](https://raw.githubusercontent.com/Just-/demo/master/kb_anim_demo.gif)
 
-Another demo 
+Try it yourself
 
 `pod try UIViewController+KeyboardAnimation`
 
