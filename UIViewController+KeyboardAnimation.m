@@ -1,9 +1,24 @@
 //
-//  UIViewController+KeyboardAnimation.m
+// UIViewController+KeyboardAnimation.m
 //
-//  Created by Anton Gaenko on 16.12.14.
-//  Copyright (c) 2014 Anton Gaenko. All rights reserved.
+// Copyright (c) 2015 Anton Gaenko
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 
 #import "UIViewController+KeyboardAnimation.h"
 #import <objc/runtime.h>
@@ -16,14 +31,14 @@ static void *ANAnimationsCompletionBlockAssociationKey = &ANAnimationsCompletion
 
 #pragma mark public
 
-- (void)an_subscribeKeyboardWithAnimations:(ANAnimationsWithKeyboadrBlock)animations
-                                completion:(ANCompletionKeyboardAnimation)completion {
+- (void)an_subscribeKeyboardWithAnimations:(ANAnimationsWithKeyboardBlock)animations
+                                completion:(ANCompletionKeyboardAnimations)completion {
     [self an_subscribeKeyboardWithBeforeAnimations:nil animations:animations completion:completion];
 }
 
-- (void)an_subscribeKeyboardWithBeforeAnimations:(ANBeforeAnimationsWithKeyboadrBlock)beforeAnimations
-                                      animations:(ANAnimationsWithKeyboadrBlock)animations
-                                      completion:(ANCompletionKeyboardAnimation)completion {
+- (void)an_subscribeKeyboardWithBeforeAnimations:(ANBeforeAnimationsWithKeyboardBlock)beforeAnimations
+                                      animations:(ANAnimationsWithKeyboardBlock)animations
+                                      completion:(ANCompletionKeyboardAnimations)completion {
     // we shouldn't check for nil because it does nothing with nil
     objc_setAssociatedObject(self, ANBeforeAnimationsBlockAssociationKey, beforeAnimations, OBJC_ASSOCIATION_COPY_NONATOMIC);
     objc_setAssociatedObject(self, ANAnimationsBlockAssociationKey, animations, OBJC_ASSOCIATION_COPY_NONATOMIC);
@@ -54,28 +69,25 @@ static void *ANAnimationsCompletionBlockAssociationKey = &ANAnimationsCompletion
 #pragma mark private
 
 // ----------------------------------------------------------------
-- (void)an_handleWillShowKeyboardNotification:(NSNotification *)notification
-{
+- (void)an_handleWillShowKeyboardNotification:(NSNotification *)notification {
     [self an_keyboardWillShowHide:notification isShowing:YES];
 }
 
 // ----------------------------------------------------------------
-- (void)an_handleWillHideKeyboardNotification:(NSNotification *)notification
-{
+- (void)an_handleWillHideKeyboardNotification:(NSNotification *)notification {
     [self an_keyboardWillShowHide:notification isShowing:NO];
 }
 
-- (void)an_keyboardWillShowHide:(NSNotification *)notification isShowing:(BOOL)isShowing
-{
+- (void)an_keyboardWillShowHide:(NSNotification *)notification isShowing:(BOOL)isShowing {
     // getting keyboard animation attributes
     CGRect keyboardRect = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     UIViewAnimationCurve curve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
     NSTimeInterval duration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     
     // getting passed blocks
-    ANAnimationsWithKeyboadrBlock animationsBlock = objc_getAssociatedObject(self, ANAnimationsBlockAssociationKey);
-    ANBeforeAnimationsWithKeyboadrBlock beforeAnimationsBlock = objc_getAssociatedObject(self, ANBeforeAnimationsBlockAssociationKey);
-    ANCompletionKeyboardAnimation completionBlock = objc_getAssociatedObject(self, ANAnimationsCompletionBlockAssociationKey);
+    ANAnimationsWithKeyboardBlock animationsBlock = objc_getAssociatedObject(self, ANAnimationsBlockAssociationKey);
+    ANBeforeAnimationsWithKeyboardBlock beforeAnimationsBlock = objc_getAssociatedObject(self, ANBeforeAnimationsBlockAssociationKey);
+    ANCompletionKeyboardAnimations completionBlock = objc_getAssociatedObject(self, ANAnimationsCompletionBlockAssociationKey);
     
     if (beforeAnimationsBlock) beforeAnimationsBlock(keyboardRect, duration, isShowing);
     
