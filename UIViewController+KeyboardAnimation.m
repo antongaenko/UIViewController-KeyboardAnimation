@@ -34,6 +34,15 @@ static void *ANAnimationsCompletionBlockAssociationKey = &ANAnimationsCompletion
 - (void)an_subscribeKeyboardWithAnimations:(ANAnimationsWithKeyboardBlock)animations
                                 completion:(ANCompletionKeyboardAnimations)completion {
     [self an_subscribeKeyboardWithBeforeAnimations:nil animations:animations completion:completion];
+    //tap guesture and swipe down guesture to close view
+    [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyboard)]];
+    UISwipeGestureRecognizer *swipeDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyboard)];
+    [swipeDown setDirection:UISwipeGestureRecognizerDirectionDown];
+    [self.view addGestureRecognizer:swipeDown];
+}
+
+- (void) hideKeyboard{
+    [self.view endEditing:true];
 }
 
 - (void)an_subscribeKeyboardWithBeforeAnimations:(ANBeforeAnimationsWithKeyboardBlock)beforeAnimations
