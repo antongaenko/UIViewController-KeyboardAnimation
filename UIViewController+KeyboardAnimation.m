@@ -58,6 +58,7 @@ static void *ANAnimationsCompletionBlockAssociationKey = &ANAnimationsCompletion
 
 - (void)an_unsubscribeKeyboard {
     // remove assotiated blocks
+    objc_setAssociatedObject(self, ANBeforeAnimationsBlockAssociationKey, nil, OBJC_ASSOCIATION_COPY_NONATOMIC);
     objc_setAssociatedObject(self, ANAnimationsBlockAssociationKey, nil, OBJC_ASSOCIATION_COPY_NONATOMIC);
     objc_setAssociatedObject(self, ANAnimationsCompletionBlockAssociationKey, nil, OBJC_ASSOCIATION_COPY_NONATOMIC);
     
