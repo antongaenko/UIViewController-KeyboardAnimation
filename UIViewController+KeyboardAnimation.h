@@ -34,6 +34,14 @@
 typedef void(^ANAnimationsWithKeyboardBlock)(CGRect keyboardRect, NSTimeInterval duration, BOOL isShowing);
 
 /**
+ *  Block to handle keyboard frame change
+ *
+ *  @param keyboardRect Final keyboard frame
+ *  @param duration     Duration for keyboard frame changing animation
+ */
+typedef void(^ANFrameChangeAnimationsWithKeyboardBlock)(CGRect keyboardRect, NSTimeInterval duration);
+
+/**
  *  Block to handle a start point of animation, could be used for simultaneous animations OR for setting some flags for internal usage.
  *
  *  @param keyboardRect Finish keyboard frame
@@ -63,6 +71,18 @@ typedef void(^ANCompletionKeyboardAnimations)(BOOL finished);
                                 completion:(ANCompletionKeyboardAnimations)completion;
 
 /**
+ * Sinse version 1.3 it's a proxy for an_subscribeKeyboardWithAnimations:completion:
+ */
+- (void)an_subscribeKeyboardShowHideWithAnimations:(ANAnimationsWithKeyboardBlock)animations
+                                        completion:(ANCompletionKeyboardAnimations)completion;
+
+/**
+ * Sinse version 1.3 it's a proxy for an_subscribeKeyboardWithAnimations:completion:
+ * with nil passed as completion
+ */
+- (void)an_subscribeKeyboardShowHideWithAnimations:(ANAnimationsWithKeyboardBlock)animations;
+
+/**
  *  Animation block will be called inside [UIView animateWithDuration:::::]
  *
  *  @tip viewWillAppear is the best place to subscribe to keyboard events
@@ -75,7 +95,25 @@ typedef void(^ANCompletionKeyboardAnimations)(BOOL finished);
  */
 - (void)an_subscribeKeyboardWithBeforeAnimations:(ANBeforeAnimationsWithKeyboardBlock)beforeAnimations
                                       animations:(ANAnimationsWithKeyboardBlock)animations
-                                completion:(ANCompletionKeyboardAnimations)completion;
+                                      completion:(ANCompletionKeyboardAnimations)completion;
+
+/**
+ * Sinse version 1.3 it's a proxy for an_subscribeKeyboardWithBeforeAnimations:animations:completion:
+ */
+- (void)an_subscribeKeyboardShowHideWithBeforeAnimations:(ANBeforeAnimationsWithKeyboardBlock)beforeAnimations
+                                              animations:(ANAnimationsWithKeyboardBlock)animations
+                                              completion:(ANCompletionKeyboardAnimations)completion;
+
+/**
+ *  Animation block will be called inside [UIView animateWithDuration:::::]
+ *
+ *  @tip viewWillAppear is the best place to subscribe to keyboard events
+ *
+ *  @param animations User defined animations. If using auto layout don't forget to call layoutIfNeeded
+ *
+ *  @warning These blocks will be holding inside UIViewController which calls it, so as with any block-style API avoid a retain cycle
+ */
+- (void)an_subscribeKeyboardFrameChangeWithAnimations:(ANFrameChangeAnimationsWithKeyboardBlock)animations;
 
 /**
  *  
@@ -86,5 +124,20 @@ typedef void(^ANCompletionKeyboardAnimations)(BOOL finished);
  *  @warning If you will not call it when current view disappeared, subscribed view controller will handle keyboard events on other screens
  */
 - (void)an_unsubscribeKeyboard;
+
+/**
+ * Sinse version 1.3 it's a proxy for an_unsubscribeKeyboard
+ */
+- (void)an_unsubscribeKeyboardShowHide;
+
+/**
+ *
+ *  Call it to unsubscribe from keyboard frame change events and clean the animation block
+ *
+ *  @tip viewWillDisappear is the best place to call it
+ *
+ *  @warning If you will not call it when current view disappeared, subscribed view controller will handle keyboard events on other screens
+ */
+- (void)an_unsubscribeKeyboardFrameChange;
 
 @end
