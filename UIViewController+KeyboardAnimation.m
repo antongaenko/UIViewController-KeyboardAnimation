@@ -23,6 +23,7 @@
 #import "UIViewController+KeyboardAnimation.h"
 #import <objc/runtime.h>
 
+static void *ANFrameChangesAnimationsBlockAssociationKey = &ANFrameChangesAnimationsBlockAssociationKey;
 static void *ANAnimationsBlockAssociationKey = &ANAnimationsBlockAssociationKey;
 static void *ANBeforeAnimationsBlockAssociationKey = &ANBeforeAnimationsBlockAssociationKey;
 static void *ANAnimationsCompletionBlockAssociationKey = &ANAnimationsCompletionBlockAssociationKey;
@@ -31,9 +32,36 @@ static void *ANAnimationsCompletionBlockAssociationKey = &ANAnimationsCompletion
 
 #pragma mark public
 
+- (void)an_subscribeKeyboardFrameChangesWithAnimations:(ANFrameChangesAnimationsWithKeyboardBlock)animations {
+    objc_setAssociatedObject(self, ANFrameChangesAnimationsBlockAssociationKey, animations, OBJC_ASSOCIATION_COPY_NONATOMIC);
+    
+    // subscribe to notifications
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(an_handleWillChageFrameKeyboardNotification:)
+                                                 name:UIKeyboardWillChangeFrameNotification
+                                               object:nil];
+}
+
+- (void)an_subscribeKeyboardShowHideWithAnimations:(ANAnimationsWithKeyboardBlock)animations {
+    [self an_subscribeKeyboardShowHideWithAnimations:animations completion:nil];
+}
+
+- (void)an_subscribeKeyboardShowHideWithAnimations:(ANAnimationsWithKeyboardBlock)animations
+                                        completion:(ANCompletionKeyboardAnimations)completion {
+    [self an_subscribeKeyboardWithAnimations:animations completion:completion];
+}
+
 - (void)an_subscribeKeyboardWithAnimations:(ANAnimationsWithKeyboardBlock)animations
                                 completion:(ANCompletionKeyboardAnimations)completion {
     [self an_subscribeKeyboardWithBeforeAnimations:nil animations:animations completion:completion];
+}
+
+- (void)an_subscribeKeyboardShowHideWithBeforeAnimations:(ANBeforeAnimationsWithKeyboardBlock)beforeAnimations
+                                              animations:(ANAnimationsWithKeyboardBlock)animations
+                                              completion:(ANCompletionKeyboardAnimations)completion {
+    [self an_subscribeKeyboardShowHideWithBeforeAnimations:beforeAnimations
+                                                animations:animations
+                                                completion:completion];
 }
 
 - (void)an_subscribeKeyboardWithBeforeAnimations:(ANBeforeAnimationsWithKeyboardBlock)beforeAnimations
@@ -56,8 +84,11 @@ static void *ANAnimationsCompletionBlockAssociationKey = &ANAnimationsCompletion
                                                object:nil];
 }
 
+#pragma mark unsubscribe
+
 - (void)an_unsubscribeKeyboard {
     // remove assotiated blocks
+    objc_setAssociatedObject(self, ANBeforeAnimationsBlockAssociationKey, nil, OBJC_ASSOCIATION_COPY_NONATOMIC);
     objc_setAssociatedObject(self, ANAnimationsBlockAssociationKey, nil, OBJC_ASSOCIATION_COPY_NONATOMIC);
     objc_setAssociatedObject(self, ANAnimationsCompletionBlockAssociationKey, nil, OBJC_ASSOCIATION_COPY_NONATOMIC);
     
@@ -66,7 +97,36 @@ static void *ANAnimationsCompletionBlockAssociationKey = &ANAnimationsCompletion
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
+- (void)an_unsubscribeKeyboardShowHide {
+    [self an_unsubscribeKeyboard];
+}
+
+- (void)an_unsubscribeKeyboardFrameChanges {
+    objc_setAssociatedObject(self, ANFrameChangesAnimationsBlockAssociationKey, nil, OBJC_ASSOCIATION_COPY_NONATOMIC);
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
+}
+
 #pragma mark private
+
+// ----------------------------------------------------------------
+- (void)an_handleWillChageFrameKeyboardNotification:(NSNotification *)notification {
+    // getting keyboard animation attributes
+    CGRect keyboardRect = [self getKeyboardRectFromNotification:notification];
+    UIViewAnimationCurve curve = [self getAnimationCurveFromNotification:notification];
+    NSTimeInterval duration = [self getDurationFromNotification:notification];
+    
+    // getting passed block
+    ANFrameChangesAnimationsWithKeyboardBlock animationsBlock = objc_getAssociatedObject(self, ANFrameChangesAnimationsBlockAssociationKey);
+    
+    [UIView animateWithDuration:duration
+                          delay:0
+                        options:UIViewAnimationOptionBeginFromCurrentState
+                     animations:^{
+                         [UIView setAnimationCurve:curve];
+                         if (animationsBlock) animationsBlock(keyboardRect, duration);
+                     }
+                     completion:nil];
+}
 
 // ----------------------------------------------------------------
 - (void)an_handleWillShowKeyboardNotification:(NSNotification *)notification {
@@ -80,9 +140,9 @@ static void *ANAnimationsCompletionBlockAssociationKey = &ANAnimationsCompletion
 
 - (void)an_keyboardWillShowHide:(NSNotification *)notification isShowing:(BOOL)isShowing {
     // getting keyboard animation attributes
-    CGRect keyboardRect = [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    UIViewAnimationCurve curve = [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
-    NSTimeInterval duration = [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    CGRect keyboardRect = [self getKeyboardRectFromNotification:notification];
+    UIViewAnimationCurve curve = [self getAnimationCurveFromNotification:notification];
+    NSTimeInterval duration = [self getDurationFromNotification:notification];
     
     // getting passed blocks
     ANAnimationsWithKeyboardBlock animationsBlock = objc_getAssociatedObject(self, ANAnimationsBlockAssociationKey);
@@ -99,6 +159,18 @@ static void *ANAnimationsCompletionBlockAssociationKey = &ANAnimationsCompletion
                          if (animationsBlock) animationsBlock(keyboardRect, duration, isShowing);
                      }
                      completion:completionBlock];
+}
+
+- (CGRect)getKeyboardRectFromNotification:(NSNotification *)notification {
+    return [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+}
+
+- (UIViewAnimationCurve)getAnimationCurveFromNotification:(NSNotification *)notification {
+    return [[notification.userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
+}
+
+- (NSTimeInterval)getDurationFromNotification:(NSNotification *)notification {
+    return [[notification.userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
 }
 
 @end
