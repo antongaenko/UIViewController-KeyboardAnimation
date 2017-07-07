@@ -39,7 +39,7 @@ typedef void(^ANAnimationsWithKeyboardBlock)(CGRect keyboardRect, NSTimeInterval
  *  @param keyboardRect Final keyboard frame
  *  @param duration     Duration for keyboard frame changing animation
  */
-typedef void(^ANFrameChangeAnimationsWithKeyboardBlock)(CGRect keyboardRect, NSTimeInterval duration);
+typedef void(^ANFrameChangesAnimationsWithKeyboardBlock)(CGRect keyboardRect, NSTimeInterval duration);
 
 /**
  *  Block to handle a start point of animation, could be used for simultaneous animations OR for setting some flags for internal usage.
@@ -112,7 +112,7 @@ typedef void(^ANCompletionKeyboardAnimations)(BOOL finished);
  *
  *  @warning These blocks will be holding inside UIViewController which calls it, so as with any block-style API avoid a retain cycle
  */
-- (void)an_subscribeKeyboardFrameChangeWithAnimations:(ANFrameChangeAnimationsWithKeyboardBlock)animations;
+- (void)an_subscribeKeyboardFrameChangesWithAnimations:(ANFrameChangesAnimationsWithKeyboardBlock)animations;
 
 /**
  *  
@@ -137,6 +137,6 @@ typedef void(^ANCompletionKeyboardAnimations)(BOOL finished);
  *
  *  @warning If you will not call it when current view disappeared, subscribed view controller will handle keyboard events on other screens
  */
-- (void)an_unsubscribeKeyboardFrameChange;
+- (void)an_unsubscribeKeyboardFrameChanges;
 
 @end

@@ -23,7 +23,7 @@
 #import "UIViewController+KeyboardAnimation.h"
 #import <objc/runtime.h>
 
-static void *ANFrameChangeAnimationsBlockAssociationKey = &ANFrameChangeAnimationsBlockAssociationKey;
+static void *ANFrameChangesAnimationsBlockAssociationKey = &ANFrameChangesAnimationsBlockAssociationKey;
 static void *ANAnimationsBlockAssociationKey = &ANAnimationsBlockAssociationKey;
 static void *ANBeforeAnimationsBlockAssociationKey = &ANBeforeAnimationsBlockAssociationKey;
 static void *ANAnimationsCompletionBlockAssociationKey = &ANAnimationsCompletionBlockAssociationKey;
@@ -32,8 +32,8 @@ static void *ANAnimationsCompletionBlockAssociationKey = &ANAnimationsCompletion
 
 #pragma mark public
 
-- (void)an_subscribeKeyboardFrameChangeWithAnimations:(ANFrameChangeAnimationsWithKeyboardBlock)animations {
-    objc_setAssociatedObject(self, ANFrameChangeAnimationsBlockAssociationKey, animations, OBJC_ASSOCIATION_COPY_NONATOMIC);
+- (void)an_subscribeKeyboardFrameChangesWithAnimations:(ANFrameChangesAnimationsWithKeyboardBlock)animations {
+    objc_setAssociatedObject(self, ANFrameChangesAnimationsBlockAssociationKey, animations, OBJC_ASSOCIATION_COPY_NONATOMIC);
     
     // subscribe to notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -101,8 +101,8 @@ static void *ANAnimationsCompletionBlockAssociationKey = &ANAnimationsCompletion
     [self an_unsubscribeKeyboard];
 }
 
-- (void)an_unsubscribeKeyboardFrameChange {
-    objc_setAssociatedObject(self, ANFrameChangeAnimationsBlockAssociationKey, nil, OBJC_ASSOCIATION_COPY_NONATOMIC);
+- (void)an_unsubscribeKeyboardFrameChanges {
+    objc_setAssociatedObject(self, ANFrameChangesAnimationsBlockAssociationKey, nil, OBJC_ASSOCIATION_COPY_NONATOMIC);
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillChangeFrameNotification object:nil];
 }
 
@@ -116,7 +116,7 @@ static void *ANAnimationsCompletionBlockAssociationKey = &ANAnimationsCompletion
     NSTimeInterval duration = [self getDurationFromNotification:notification];
     
     // getting passed block
-    ANFrameChangeAnimationsWithKeyboardBlock animationsBlock = objc_getAssociatedObject(self, ANFrameChangeAnimationsBlockAssociationKey);
+    ANFrameChangesAnimationsWithKeyboardBlock animationsBlock = objc_getAssociatedObject(self, ANFrameChangesAnimationsBlockAssociationKey);
     
     [UIView animateWithDuration:duration
                           delay:0
