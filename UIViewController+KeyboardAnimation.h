@@ -77,8 +77,7 @@ typedef void(^ANCompletionKeyboardAnimations)(BOOL finished);
                                         completion:(ANCompletionKeyboardAnimations)completion;
 
 /**
- * Sinse version 1.3 it's a proxy for an_subscribeKeyboardWithAnimations:completion:
- * with nil passed as completion
+ * Will call an_subscribeKeyboardShowHideWithAnimations with `nil` completion
  */
 - (void)an_subscribeKeyboardShowHideWithAnimations:(ANAnimationsWithKeyboardBlock)animations;
 
