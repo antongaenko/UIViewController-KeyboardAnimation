@@ -75,6 +75,8 @@ For more complex behaviour (like in demo section) you can use extended API call 
 }];
 ```
 
+Sinse version 1.3 you could add reaction for UIKeyboardWillChangeFrameNotification with an_subscribeKeyboardFrameChangesWithAnimations/an_unsubscribeKeyboardFrameChanges (thanks ![@timaktimak](https://github.com/timaktimak) for PR 🙌) 
+
 ## Underhood
 
 This category registers/unregisters your view controller to **UIKeyboardWillShowNotification/UIKeyboardWillHideNotification**. Also it holds animation blocks, so you really need to provide weak reference to self (i use **@weakify/@strongify** from ReactiveCocoa dependency).
@@ -83,7 +85,7 @@ This category registers/unregisters your view controller to **UIKeyboardWillShow
 
 Add the following to your [CocoaPods](http://cocoapods.org/) Podfile
 
-    pod 'UIViewController+KeyboardAnimation', '~> 1.2'
+    pod 'UIViewController+KeyboardAnimation', '~> 1.3'
 
 or clone as a git submodule,
 

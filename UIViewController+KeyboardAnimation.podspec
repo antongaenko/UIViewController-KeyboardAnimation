@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name     = 'UIViewController+KeyboardAnimation'
-  s.version  = '1.2'
+  s.version  = '1.3'
   s.ios.deployment_target   = '6.0'
   s.license  = { :type => 'MIT', :file => 'LICENSE' }
   s.summary  = 'Showing/dismissing keyboard animation in simple view controller category.'
